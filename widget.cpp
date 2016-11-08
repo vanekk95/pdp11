@@ -10,8 +10,13 @@ Widget::Widget(QWidget *parent, Arg *arg) :
     ui->setupUi(this);
 
     pthread_mutex_lock(arg->mutex);
-    sharedMem = (SharedMem *)arg->startMem;
+    sharedMem = arg->sharedMem;
     pthread_mutex_unlock(arg->mutex);
+
+    printf("sharedMem in widget = %p:\n vidio_mem = %p\t asmCommand = %p\n",
+           sharedMem, sharedMem->vidio_memory, sharedMem->asmCommand);
+    for (int i = 0; i < 8; i++)
+        printf("command[%d] = \"%s\"\n", i, sharedMem->asmCommand[i].command);
 
     TableModel *myModel = new TableModel();
     myModel->setSharedMem(sharedMem);

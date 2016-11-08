@@ -30,7 +30,7 @@ typedef struct SharedMem {
 typedef struct Arg {
     int argc;
     char **argv;
-    void *startMem;
+    SharedMem *sharedMem;
     pthread_mutex_t *mutex;
 } Arg;
 

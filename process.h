@@ -6,7 +6,7 @@
 class Process
 {
 public:
-    Process(void *startMem);
+    Process(SharedMem *sharedMem);
     ~Process();
 
     void run();

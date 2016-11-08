@@ -4,7 +4,7 @@
 void *cpu(void *p){
     // fulled struct global
     Arg *arg = (Arg *)p;
-    Process process(arg->startMem);
+    Process process(arg->sharedMem);
     pthread_mutex_unlock(arg->mutex);
     return p;
 }
@@ -21,37 +21,19 @@ void *gui(void *p) {
 
 int main(int argc, char *argv[])
 {
-    char shared_mem_name[] = "my_shared_memory";
-    int shared_mem_size = 128*1024;
-    int shm;
-
-    if ( (shm = shm_open(shared_mem_name, O_CREAT|O_RDWR, 0777)) == -1 ) {
-        perror("shm_open");
-        return 1;
-    }
-
-    if ( ftruncate(shm, shared_mem_size+1) == -1 ) {
-        perror("ftruncate");
-        return 1;
-    }
-
-    void *addr = mmap(0, shared_mem_size+1, PROT_WRITE|PROT_READ, MAP_SHARED, shm, 0);
-    if ( addr == (char*)-1 ) {
-        perror("mmap");
-        return 1;
-    }
-
     pthread_mutex_t mutex;
     pthread_mutex_init(&mutex, NULL);
     pthread_mutex_lock(&mutex);
 
     pthread_t gui_st, cpu_st;
     Arg arg;
+    SharedMem sharedMem;
+    sharedMem.isFull = 0;
 
     arg.argc = argc;
     arg.argv = argv;
     arg.mutex = &mutex;
-    arg.startMem = addr;
+    arg.sharedMem = &sharedMem;
 
     errno = 0;
     if (pthread_create(&gui_st, NULL, gui, &arg) > 0) {
@@ -73,10 +55,6 @@ int main(int argc, char *argv[])
     }
 
     pthread_mutex_destroy(&mutex);
-
-    munmap(addr, shared_mem_size);
-    close(shm);
-    shm_unlink(shared_mem_name);
 
     return 0;
 }
