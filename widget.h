@@ -24,6 +24,7 @@ private:
     Ui::Widget *ui;
     QTimer *timer;
     SharedMem *sharedMem;
+    CallList *callList;
 
 private slots:
     void slotButtonRun();

@@ -9,9 +9,11 @@ Widget::Widget(QWidget *parent, Arg *arg) :
 {
     ui->setupUi(this);
 
-    pthread_mutex_lock(arg->mutex);
+//    pthread_mutex_lock(arg->mutex);
+    while (!arg->sharedMem->isFull);
     sharedMem = arg->sharedMem;
-    pthread_mutex_unlock(arg->mutex);
+    callList = arg->callList;
+//    pthread_mutex_unlock(arg->mutex);
 
     printf("sharedMem in widget = %p:\n vidio_mem = %p\t asmCommand = %p\n",
            sharedMem, sharedMem->vidio_memory, sharedMem->asmCommand);
@@ -61,20 +63,20 @@ void Widget::slotUpdateRegister() {
     sprintf(strtmp, "0x%x", sharedMem->registers[7]);
     ui->val_R_7->setText(strtmp);
 
-    sprintf(strtmp, "x%x", sharedMem->flags);
+    sprintf(strtmp, "x%x", *sharedMem->flags);
     ui->val_flags->setText(strtmp);
 }
 
 void Widget::slotButtonRun() {
-    //process.run();
+    callList->doRun = 1;
 }
 
 void Widget::slotButtonStopReset() {
-    //process.stopReset();
+    callList->doStopReset = 1;
 }
 
 void Widget::slotButtonStep() {
-    //process.step();
+    callList->doStep = 1;
 }
 
 Widget::~Widget()

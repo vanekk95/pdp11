@@ -2,7 +2,8 @@
 #include <malloc.h>
 #include <string.h>
 
-Process::Process(SharedMem *sharedMem) {
+Process::Process(SharedMem *sharedMem, CallList *callList) {
+    this->callList = callList;
     numberOfPixel = 100;
     matrix = (unsigned char *)calloc(sizeof(unsigned char), numberOfPixel*numberOfPixel);
     if (!matrix) {
@@ -51,6 +52,7 @@ Process::Process(SharedMem *sharedMem) {
         return;
     }
     *flags = 129;
+    color = 0;
     sharedMem->asmCommand = asmCommand;
     sharedMem->flags = flags;
     sharedMem->vidio_memory = matrix;
@@ -73,13 +75,32 @@ Process::~Process() {
     free(flags);
 }
 
+void Process::checkCallList() {
+    if (callList->doRun) {
+        callList->doRun = 0;
+        run();
+    }
+    if (callList->doStopReset) {
+        callList->doStopReset = 0;
+        stopReset();
+    }
+    if (callList->doStep) {
+        callList->doStep = 0;
+        step();
+    }
+    if (callList->setBreakPointForAddress >= 0) {
+        setBreakePoint(callList->setBreakPointForAddress);
+        callList->setBreakPointForAddress = -1;
+    }
+}
+
 void Process::run() {
-    unsigned char c = 0;
+    unsigned char c = color;
     for (int x = 0; x < numberOfPixel; x++)
     for (int y = 0; y < numberOfPixel; y++) {
         matrix[x*numberOfPixel + y] = c++;
     }
-
+    color +=4;
 }
 
 void Process::stopReset() {
@@ -89,7 +110,21 @@ void Process::stopReset() {
     }
 }
 
-
 void Process::step() {
 
 }
+
+void Process::setBreakePoint(int address) {
+
+}
+
+
+
+
+
+
+
+
+
+
+
