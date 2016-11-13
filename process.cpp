@@ -35,8 +35,10 @@ Process::Process(SharedMem *sharedMem, CallList *callList) {
     strcpy(asmCommand[6].command, "MSG:   .ASCIZ /Hello, world!/");
     strcpy(asmCommand[7].command, "       .END    HELLO");
 
-    for (int i = 0; i < numberOfCommand; i++)
+    for (int i = 0; i < numberOfCommand; i++) {
         asmCommand[i].address = i+100;
+        asmCommand[i].breakePointIsSet = 0;
+    }
 
     registers = (short int *)malloc(sizeof(short int) * 8);
     if (!registers) {
@@ -58,11 +60,6 @@ Process::Process(SharedMem *sharedMem, CallList *callList) {
     sharedMem->vidio_memory = matrix;
     sharedMem->registers = registers;
     sharedMem->isFull = 1;
-
-    printf("sharedMem in process = %p\n vidio_mem = %p\t asmCommand = %p\n",
-           sharedMem, sharedMem->vidio_memory, sharedMem->asmCommand);
-    for (int i = 0; i < numberOfCommand; i++)
-        printf("command[%d] = \"%s\"\n", i, sharedMem->asmCommand[i].command);
 }
 
 Process::~Process() {
@@ -115,7 +112,7 @@ void Process::step() {
 }
 
 void Process::setBreakePoint(int address) {
-
+    printf("set breakpoint to address %d\n", address);
 }
 
 

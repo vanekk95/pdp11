@@ -35,7 +35,6 @@ typedef struct Arg {
     SharedMem *sharedMem;
     CallList *callList;
     int working;
-//    pthread_mutex_t *mutex;
 } Arg;
 
 #endif // FORMAIN_H

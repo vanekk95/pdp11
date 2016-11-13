@@ -2,10 +2,8 @@
 #include "formain.h"
 
 void *cpu(void *p){
-    // fulled struct global
     Arg *arg = (Arg *)p;
     Process process(arg->sharedMem, arg->callList);
-//    pthread_mutex_unlock(arg->mutex);
     useconds_t usec = 300;
     while (arg->working){
         process.checkCallList();
@@ -26,9 +24,6 @@ void *gui(void *p) {
 
 int main(int argc, char *argv[])
 {
-//    pthread_mutex_t mutex;
-//    pthread_mutex_init(&mutex, NULL);
-//    pthread_mutex_lock(&mutex);
 
     Arg arg;
     CallList callList;
@@ -42,7 +37,6 @@ int main(int argc, char *argv[])
 
     arg.argc = argc;
     arg.argv = argv;
-//    arg.mutex = &mutex;
     arg.sharedMem = &sharedMem;
     arg.callList = &callList;
     arg.working = 1;
@@ -69,8 +63,6 @@ int main(int argc, char *argv[])
         printf("error pthread_join cpu\n");
         return errno;
     }
-
-//    pthread_mutex_destroy(&mutex);
 
     return 0;
 }

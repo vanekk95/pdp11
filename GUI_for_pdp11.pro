@@ -11,17 +11,20 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GUI_for_pdp11
 TEMPLATE = app
 
+QT += sql
 
 SOURCES += main.cpp\
         widget.cpp \
     bitmapwidget.cpp \
     tablemodel.cpp \
-    process.cpp
+    process.cpp \
+    styleddelegate.cpp
 
 HEADERS  += widget.h \
     formain.h \
     bitmapwidget.h \
     tablemodel.h \
-    process.h
+    process.h \
+    styleddelegate.h
 
 FORMS    += widget.ui
